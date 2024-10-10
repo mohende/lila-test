@@ -2,6 +2,9 @@ import { fetchSalesData, saveSalesData } from "@/lib/shopify";
 import { NextResponse } from "next/server";
 import { SaleStatus } from "@prisma/client";
 
+/**
+ * route to get sales using the sale status
+ */
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

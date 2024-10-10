@@ -25,6 +25,7 @@ model Sale {
   status           SaleStatus @default(open)
   customerName     String
   numberOfProducts Int        @default(0)
+  productsName     String[]   @default([])
   totalPrice       Float
   createdAt        DateTime   @default(now())
 }

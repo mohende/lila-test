@@ -1,12 +1,14 @@
 import { SaleStatus } from "@prisma/client";
 
 export type Sale = {
-  id: number;
+  id?: number;
   shopifyOrderId: string;
+  status: SaleStatus;
   customerName: string;
   numberOfProducts: number;
+  productsName: string[];
   totalPrice: number;
-  createdAt: string;
+  createdAt?: string;
 };
 
 export type ShopifyOrder = {

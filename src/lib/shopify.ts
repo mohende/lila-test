@@ -1,10 +1,13 @@
 // src/lib/shopify.ts
 
-import { ShopifyOrder } from "@/types/sales";
+import { Sale, ShopifyOrder } from "@/types/sales";
 import { prisma } from "./prisma";
 import { SaleStatus } from "@prisma/client";
 
-// Fetch sales data from Shopify API
+/**
+ * Fetch sales data from Shopify API
+ * using Data.now to avoid cached data
+ */
 export const fetchSalesData = async (
   status: SaleStatus
 ): Promise<ShopifyOrder[]> => {
@@ -29,25 +32,33 @@ export const fetchSalesData = async (
   return data.orders as ShopifyOrder[];
 };
 
-// Save sales data to the database
+/**
+ * prepare each sale from shopify orders
+ * update it if it doesn't exist in our databse otherwise create it
+ */
 export const saveSalesData = async (shopifyOrders: ShopifyOrder[]) => {
   const sales = [];
   for (const order of shopifyOrders) {
+    const saleToSave: Sale = {
+      shopifyOrderId: order.id.toString(),
+      status: order.cancelled_at
+        ? SaleStatus.cancelled
+        : order.closed_at
+        ? SaleStatus.closed
+        : SaleStatus.open,
+      customerName: order.customer
+        ? `${order.customer?.first_name} ${order.customer?.last_name}`
+        : "",
+      numberOfProducts: order.line_items?.length,
+      productsName: order.line_items.map((item) => item.name),
+      totalPrice: parseFloat(order.total_price),
+    };
+
     const sale = await prisma.sale.upsert({
       where: { shopifyOrderId: order.id.toString() },
-      update: {},
+      update: saleToSave,
       create: {
-        shopifyOrderId: order.id.toString(),
-        status: order.cancelled_at
-          ? SaleStatus.cancelled
-          : order.closed_at
-          ? SaleStatus.closed
-          : SaleStatus.open,
-        customerName: order.customer
-          ? `${order.customer?.first_name} ${order.customer?.last_name}`
-          : "",
-        numberOfProducts: order.line_items?.length,
-        totalPrice: parseFloat(order.total_price),
+        ...saleToSave,
       },
     });
     sales.push(sale);

@@ -1,6 +1,8 @@
 "use client";
 import { orderStatusOptions, Sale } from "@/types/sales";
 import { useEffect, useState } from "react";
+import { SaleStatus } from "@prisma/client";
+import classNames from "classnames";
 
 const SalesPage = () => {
   const [sales, setSales] = useState<Sale[]>([]);
@@ -39,8 +41,10 @@ const SalesPage = () => {
             <th className="border border-gray-300 p-2">ID</th>
             <th className="border border-gray-300 p-2">Customer</th>
             <th className="border border-gray-300 p-2">Number Of Products</th>
+            <th className="border border-gray-300 p-2">Products Name</th>
             <th className="border border-gray-300 p-2">Total Price</th>
             <th className="border border-gray-300 p-2">Date</th>
+            <th className="border border-gray-300 p-2">Status</th>
           </tr>
         </thead>
         <tbody>
@@ -53,9 +57,28 @@ const SalesPage = () => {
               <td className="border border-gray-300 p-2">
                 {sale.numberOfProducts}
               </td>
+              <td className="border border-gray-300 p-2 max-w-[280px] break-all">
+                {sale.productsName.map((name, index) => (
+                  <div key={index}>{name}</div>
+                ))}
+              </td>
               <td className="border border-gray-300 p-2">{sale.totalPrice}</td>
               <td className="border border-gray-300 p-2">
-                {new Date(sale.createdAt).toLocaleString()}
+                {new Date(sale.createdAt || "").toLocaleString()}
+              </td>
+              <td className="border border-gray-300 p-2">
+                <span
+                  className={classNames(
+                    `font-semibold text-md text-gray-900 text-opacity-80 px-2 py-1 rounded-md`,
+                    {
+                      "bg-green-300": sale.status === SaleStatus.open,
+                      "bg-yellow-200": sale.status === SaleStatus.closed,
+                      "bg-red-300": sale.status === SaleStatus.cancelled,
+                    }
+                  )}
+                >
+                  {sale.status}
+                </span>
               </td>
             </tr>
           ))}
