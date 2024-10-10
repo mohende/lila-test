@@ -38,6 +38,7 @@ export const fetchSalesData = async (
  */
 export const saveSalesData = async (shopifyOrders: ShopifyOrder[]) => {
   const sales = [];
+
   for (const order of shopifyOrders) {
     const saleToSave: Sale = {
       shopifyOrderId: order.id.toString(),

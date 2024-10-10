@@ -24,11 +24,11 @@ export type ShopifyOrder = {
 };
 
 export const orderStatusOptions: {
-  value: SaleStatus | "Any";
+  value: SaleStatus | "any";
   label: string;
 }[] = [
-  { value: "Any", label: "Any" },
+  { value: "any", label: "Any" },
   { value: SaleStatus.open, label: "Open" },
   { value: SaleStatus.closed, label: "Archived" },
-  { value: SaleStatus.cancelled, label: "Canceled" },
+  { value: SaleStatus.cancelled, label: "Cancelled" },
 ];

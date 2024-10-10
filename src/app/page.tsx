@@ -8,6 +8,7 @@ const SalesPage = () => {
   const [sales, setSales] = useState<Sale[]>([]);
   const [selectedStatus, setSelectedStatus] = useState("any");
 
+  // fetch data using sales get route
   useEffect(() => {
     let data = [];
     const fetchSales = async () => {
